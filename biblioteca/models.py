@@ -8,3 +8,7 @@ class Usuario(AbstractUser):
     telefono=models.IntegerField(validators=[MaxValueValidator(9)])
 class Libro(models.Model):
     título=models.TextField()
+    autor=models.CharField()
+    editorial=models.CharField()
+    fecha_publicación=models.DateField()
+    genero=models.
