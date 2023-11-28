@@ -1,0 +1,22 @@
+{% extends 'biblioteca/base.html'%}
+{% block content %}
+<h1>Lista de libros </h1>
+<a href="{%url 'crear'%}">Crear libro</a>
+{%for libro in libro_list %}
+    <h1>Titulo - {{libro.titulo}}</h1>
+    <h2>Autor - {{libro.autor}}</h2>
+    <h2>Editorial - {{libro.editorial}}</h2>
+    <h2>Fecha - {{libro.fecha_publicacion}}</h2>
+    <h2>Rating - {{libro.rating}}</h2>
+    <h2>Genero - {{libro.genero}}</h2>
+    <h2>ISBN - {{libro.ISBN}}</h2>
+    <p>Resumen - {{libro.resumen}}</p>
+    {%if libro.portada %}
+    <img src="{{libro.portada.url}}" alt="" width="300"/>
+    {%endif%}
+    <h3>disponibilidad - {{libro.disponibilidad}}</h3>
+    <a href="{% url 'detalles' pk=libro.pk %}">Enlace a {{libro.titulo}}</a>
+    <a href="{% url 'borrar' pk=libro.pk%}">Eliminar {{libro.titulo}}</a>
+    
+{%endfor%}
+{% endblock %}

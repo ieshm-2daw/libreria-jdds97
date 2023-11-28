@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
+WSGI_APPLICATION = 'mysite.wsgi.application' 
 
 
 # Database
@@ -107,11 +107,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'es-us'
+LANGUAGE_CODE = 'es-es'
 
-LANGUAGES=[('en','English'),
+'''LANGUAGES=[('en','English'),
         ('es','Spanish')]
 
+'''
 TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
@@ -124,7 +125,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_ROOT= os.path.join(BASE_DIR,'media')
 
 MEDIA_URL='/media/'
 

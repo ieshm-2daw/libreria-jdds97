@@ -1,0 +1,10 @@
+{% extends 'biblioteca/base.html'%}
+{%block content%}
+<form action="{% url 'crear'%}" method="post">
+    {%csrf_token%}
+    {{form.as_p}}
+    <button type="submit">Añadir libro a la biblioteca</button>
+    <a href="{% url 'listar' %}">Volver a los libros</a>
+</form>
+
+{%endblock%}
