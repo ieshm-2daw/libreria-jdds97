@@ -1,6 +1,6 @@
 {% extends 'biblioteca/base.html'%}
 {%block content%}
-<form action="{% url 'crear'%}" method="post">
+<form action="{% url 'crear'%}" enctype="multipart/form-data" method="post" >
     {%csrf_token%}
     {{form.as_p}}
     <button type="submit">Añadir libro a la biblioteca</button>

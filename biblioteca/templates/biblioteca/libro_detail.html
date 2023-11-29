@@ -11,7 +11,9 @@
     {%if libro.portada %}
     <img src="{{libro.portada.url}}" alt="" width="300"/>
     {%endif%}
+    <br>
+    <h3>disponibilidad - {{libro.disponibilidad}}</h3>
     <a href="{% url 'borrar' libro.pk%}">Borrar libro</a>
     <a href="{% url 'listar' %}">Volver a los libros</a>
-    <h3>disponibilidad - {{libro.disponibilidad}}</h3>
+    
 {%endblock%}

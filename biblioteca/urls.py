@@ -12,6 +12,5 @@ urlpatterns = [
     path('autor/new/',Crear_autor.as_view(),name='detalles'),
 ]
 
-'''
-urlpatterns+= static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
-'''
+
+

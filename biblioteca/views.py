@@ -6,7 +6,7 @@ from .models import Libro,Autor
 
 class Crear_libro(CreateView):
     model=Libro
-    fields = ['titulo','autor','editorial','fecha_publicacion','rating']
+    fields = "__all__"
     success_url = reverse_lazy("listar")
     
 class Listar_libros(ListView):
