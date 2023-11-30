@@ -16,6 +16,8 @@
     <a href="{% url 'borrar' libro.pk%}">Borrar libro</a>
     <a href="{% url 'listar' %}">Volver a los libros</a>
     <a href="{% url 'editar' libro.pk %}">Editar libro</a>
-    <a href="{% url 'prestamo' libro.pk %}">Reservar libro</a>
-    
+   <button type="submit"><a href="{% url 'prestamo' libro.pk %}">Confirmar prestamo</a></button> 
+    <form action="{'url 'editar''}" method="post">
+
+    </form>
 {%endblock%}

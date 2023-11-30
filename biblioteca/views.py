@@ -1,8 +1,8 @@
 from typing import Any
 from django.shortcuts import render
-from django.views.generic import CreateView,ListView,UpdateView,DeleteView,DetailView
+from django.views.generic import CreateView,ListView,UpdateView,DeleteView,DetailView,View
 from django.urls import reverse_lazy
-from .models import Libro,Autor
+from .models import Libro,Autor,Prestamo
 
 
 class Crear_libro(CreateView):
@@ -36,4 +36,13 @@ class Crear_autor(CreateView):
     model=Autor
     fields="__all__"
     success_url=reverse_lazy("listar_autores")
+class Crear_prestamo(View):
+    template_name="biblioteca/prestamo_form.html"
+    form_class=Editar_libro
+    def get(self,request,pk):
+        libro=Libro.objects.get(id=pk)
+        return render(request,self.template_name,{'libro':libro})
+    def post(self,request,pk):
+        libro 
+        disponibilidad="P"
     
