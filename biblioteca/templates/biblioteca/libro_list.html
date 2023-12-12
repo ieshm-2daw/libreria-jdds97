@@ -1,25 +1,28 @@
-{% extends 'biblioteca/base.html'%}
-{% block content %}
-<h1>Lista de libros </h1>
+{% extends 'biblioteca/base.html'%} {% block content %}
+<h1>Lista de libros</h1>
 <a href="{%url 'crear'%}">Crear libro</a>
 
-    <h1>Libros Disponibles</h1>
-    {%for libro in libros_disponibles %}
-    <h1>Titulo - {{libro.titulo}}</h1>
-    <h2>Autor - {{libro.autor}}</h2>
-    <h2>Editorial - {{libro.editorial}}</h2>
-    <h2>Fecha - {{libro.fecha_publicacion}}</h2>
-    <h2>Rating - {{libro.rating}}</h2>
-    <h2>Genero - {{libro.genero}}</h2>
-    <h2>ISBN - {{libro.ISBN}}</h2>
-    <p>Resumen - {{libro.resumen}}</p>
-    {%if libro.portada %}
-    <img src="{{libro.portada.url}}" alt="" width="300"/>
-    {%endif%}
-    <h3>disponibilidad - {{libro.disponibilidad}}</h3>
-    <a href="{% url 'detalles' pk=libro.pk %}">Enlace a {{libro.titulo}}</a>
-    <a href="{% url 'borrar' pk=libro.pk%}">Eliminar {{libro.titulo}}</a>
-    
+<a href="{}"class="btn btn-primary text-end">Libros Disponibles</a>
+{%for libro in libros_disponibles %}
+<h1>Titulo - {{libro.titulo}}</h1>
+<h2>Autor - {{libro.autor}}</h2>
+<h2>Editorial - {{libro.editorial}}</h2>
+<h2>Fecha - {{libro.fecha_publicacion}}</h2>
+<h2>Rating - {{libro.rating}}</h2>
+<h2>Genero - {{libro.genero}}</h2>
+<h2>ISBN - {{libro.ISBN}}</h2>
+<p>Resumen - {{libro.resumen}}</p>
+{%if libro.portada %}
+<img src="{{libro.portada.url}}" alt="" width="300" />
+{%endif%}
+<h3>disponibilidad - {{libro.disponibilidad}}</h3>
+<a href="{% url 'detalles' pk=libro.pk %}" class="btn btn-primary"
+  >Enlace al Libro {{libro.titulo}}</a
+>
+<a href="{% url 'borrar' pk=libro.pk%}" class="btn btn-primary"
+  >Eliminar {{libro.titulo}}</a
+>
+
 {%endfor%}
 <h1>Libros Reservados</h1>
 {%for libro in libros_reservados %}
@@ -32,11 +35,14 @@
 <h2>ISBN - {{libro.ISBN}}</h2>
 <p>Resumen - {{libro.resumen}}</p>
 {%if libro.portada %}
-<img src="{{libro.portada.url}}" alt="" width="300"/>
+<img src="{{libro.portada.url}}" alt="" width="300" />
 {%endif%}
-<h3>disponibilidad - {{libro.disponibilidad}}</h3>
-<a href="{% url 'detalles' pk=libro.pk %}">Enlace a {{libro.titulo}}</a>
-<a href="{% url 'borrar' pk=libro.pk%}">Eliminar {{libro.titulo}}</a>
+<h3>Disponibilidad - {{libro.disponibilidad}}</h3>
+<a href="{% url 'detalles' pk=libro.pk %}" class="btn btn-primary"
+  >Enlace al Libro {{libro.titulo}}</a
+>
+<a href="{% url 'borrar' pk=libro.pk%}" class="btn btn-primary"
+  >Eliminar {{libro.titulo}}</a
+>
 
-{%endfor%}
-{% endblock %}
+{%endfor%} {% endblock %}

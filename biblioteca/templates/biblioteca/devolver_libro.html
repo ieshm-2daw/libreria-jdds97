@@ -6,7 +6,7 @@
 <h2>Rating - {{libro.rating}}</h2>
 <h2>Genero - {{libro.genero}}</h2>
 <h2>ISBN - {{libro.ISBN}}</h2>
-<form action="{% url 'prestamo' libro.pk %} " method="post">
+<form action="{% url 'devolver' libro.pk %} " method="post">
   {%csrf_token%} {{form.as_p}}
   <button type="submit" value="Confirmar" class="btn btn-primary">
     Confirmar disponibilidad
