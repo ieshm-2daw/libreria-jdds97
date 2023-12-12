@@ -9,7 +9,7 @@ from django.views.generic import (
     View,
 )
 from django.urls import reverse_lazy
-from .models import Libro, Autor, Prestamo
+from .models import Libro, Autor, Prestamo, Usuario
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 
@@ -54,6 +54,7 @@ class Crear_autor(CreateView):
     success_url = reverse_lazy("listar_autores")
 
 
+"""
 class Crear_prestamo(View):
     template_name = "biblioteca/prestamo_form.html"
     libro = None
@@ -75,6 +76,8 @@ class Crear_prestamo(View):
         return redirect("detalles", self.libro.pk)
 
 
+"""
+"""
 class Devolver_Libro(View):
     template_name = "bibilioteca/devolver_libro.html"
     libro=None
@@ -82,8 +85,51 @@ class Devolver_Libro(View):
         self.libro = get_object_or_404(Libro, pk=pk)
         return render(request, self.template_name, {"libro": self.libro})
     def post(self,request, pk):
+        self.libro = get_object_or_404(Libro, pk=pk)
         prestamo = Libro.objects.filter(disponibilidad="P", usuario=request.user)
         # filter libro prestadp ,el usuario y el estado prestado,recsatar
         prestamo.disponibilidad = "D"
         self.libro.disponibilidad = "D"
         return redirect("detalles",self.libro.pk)
+"""
+
+
+class Libros_disponibles(View):
+    def get(self, request):
+        libros = Libro.objects.filter(disponibilidad="D")
+        return render(request, "biblioteca/libros_disponibles.html", {"libros": libros})
+
+
+class Libros_reservados(View):
+    def get(self, request):  # obtener el usuario logueado
+        reservas = Prestamo.objects.filter(usuario=request.user).order_by(
+            "fecha_creacion"
+        )
+        return render(
+            request, "biblioteca/libros_reservados.html", {"reservas": reservas}
+        )
+
+
+class Crear_prestamo(CreateView):
+    model = Prestamo
+    fields = "__all__"
+    success_url = reverse_lazy("listar")
+
+    def form_valid(self, form):
+        libro = Libro.objects.get(pk=self.kwargs["pk"])
+        form.instance.usuario = self.request.user
+        form.instance.libro = libro
+        form.instance.estado = "P"
+        libro.disponibilidad = "P"
+        libro.save()
+        return super().form_valid(form)
+
+
+class Devolver_Libro(View):
+    def delete(self, request, pk):
+        libro = get_object_or_404(Libro, pk=pk)
+        prestamo = Prestamo.objects.filter(disponibilidad="P", usuario=request.user)
+        prestamo.update(disponibilidad="D")
+        libro.disponibilidad = "D"
+        libro.save()
+        return redirect("listar")
