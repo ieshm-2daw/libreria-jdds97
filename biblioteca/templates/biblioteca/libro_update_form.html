@@ -1,10 +1,13 @@
-{% extends 'biblioteca/base.html'%} {%block content %}
+{% extends 'biblioteca/base.html'%} {% block content %}
+<h1 class="mt-5">Editar libro</h1>
 <form
+  class="form mt-5"
   action="{% url 'editar' libro.pk%}"
   method="post"
   enctype="multipart/form-data"
 >
-  {%csrf_token%} {{form.as_p}}
-  <button type="submit">Confirmar</button>
+  {% csrf_token %}
+  <div class="form-control shadow-lg">{{ form.as_p }}</div>
+  <button class="btn btn-primary mt-3" type="submit">Confirmar</button>
 </form>
-{%endblock%}
+{% endblock %}

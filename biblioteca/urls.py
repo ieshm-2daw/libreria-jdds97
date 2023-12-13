@@ -9,6 +9,7 @@ from .views import (
     Devolver_Libro,
     Libros_disponibles,
     Mis_libros,
+    Buscar_Libro,
 )
 from .views import Crear_autor
 
@@ -23,7 +24,10 @@ urlpatterns = [
     path("prestamo/new/<int:pk>/", Crear_prestamo.as_view(), name="prestamo"),
     path("prestamo/devolver/<int:pk>/", Devolver_Libro.as_view(), name="devolver"),
     path(
-        "libros_disponibles/", Libros_disponibles.as_view(), name="libros_disponibles"
+        "libros_disponibles/<str:usuario>",
+        Libros_disponibles.as_view(),
+        name="libros_disponibles",
     ),
     path("mis_libros/", Mis_libros.as_view(), name="mis_libros"),
+    path("buscar/", Buscar_Libro.as_view(), name="buscar"),
 ]

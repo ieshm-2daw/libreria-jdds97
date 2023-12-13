@@ -15,6 +15,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 
 
+# pylint: disable=no-member
 class Crear_libro(CreateView):
     model = Libro
     fields = "__all__"
@@ -57,50 +58,10 @@ class Crear_autor(CreateView):
     success_url = reverse_lazy("listar_autores")
 
 
-"""
-class Crear_prestamo(View):
-    template_name = "biblioteca/prestamo_form.html"
-    libro = None
-
-    def get(self, request, pk):
-        self.libro = get_object_or_404(Libro, pk=pk)
-        return render(request, self.template_name, {"libro": self.libro})
-
-    def post(self, request, pk):
-        libro = Libro.objects.get(pk=pk)
-        Prestamo.objects.create(
-            usuario=request.user,
-            libro=self.libro,
-            fecha_prestamo="1997-12-12",
-            estado="P",
-        )
-        self.libro.disponibilidad = "P"
-        self.libro.save()
-        return redirect("detalles", self.libro.pk)
-
-
-"""
-"""
-class Devolver_Libro(View):
-    template_name = "bibilioteca/devolver_libro.html"
-    libro=None
-    def get(self,request, pk):
-        self.libro = get_object_or_404(Libro, pk=pk)
-        return render(request, self.template_name, {"libro": self.libro})
-    def post(self,request, pk):
-        self.libro = get_object_or_404(Libro, pk=pk)
-        prestamo = Libro.objects.filter(disponibilidad="P", usuario=request.user)
-        # filter libro prestadp ,el usuario y el estado prestado,recsatar
-        prestamo.disponibilidad = "D"
-        self.libro.disponibilidad = "D"
-        return redirect("detalles",self.libro.pk)
-"""
-
-
-class Libros_disponibles(View):
-    def get(self, request):
-        libros = Libro.objects.filter(disponibilidad="D")
-        return render(request, "biblioteca/libros_disponibles.html", {"libros": libros})
+class Libros_disponibles(ListView):
+    model = Libro
+    queryset = Libro.objects.filter(disponibilidad="D")
+    template_name_suffix = "_disponibles"
 
 
 class Mis_libros(ListView):
@@ -109,6 +70,7 @@ class Mis_libros(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
         context["libros_devueltos"] = Prestamo.objects.filter(
             usuario=self.request.user, estado="D"
         )
@@ -118,44 +80,41 @@ class Mis_libros(ListView):
         return context
 
 
+# Arreglar prestamo para el usuario
 class Crear_prestamo(CreateView):
     model = Prestamo
-    fields = "__all__"
     success_url = reverse_lazy("listar")
 
-    def form_valid(self, form):
+    def get(self, request, *args, **kwargs):
         libro = Libro.objects.get(pk=self.kwargs["pk"])
-        form.instance.usuario = self.request.user
-        form.instance.libro = libro
-        form.instance.estado = "P"
+        prestamo = Prestamo.objects.get(
+            libro=libro,
+            usuario=self.request.user,
+        )
+        prestamo.save()
         libro.disponibilidad = "P"
         libro.save()
-        return super().form_valid(form)
+        return redirect(self.get_success_url())
 
 
-class Devolver_Libro(UpdateView):
-    model = Prestamo
-    fields = "__all__"
-    template_name_suffix = "_update_form"
-    success_url = reverse_lazy("listar")
-
-    def form_valid(self, form):
-        libro = Libro.objects.get(pk=self.kwargs["pk"])
-        form.instance.usuario = self.request.user
-        form.instance.libro = libro
-        form.instance.estado = "D"
-        libro.disponibilidad = "D"
-        libro.save()
-        return super().form_valid(form)
-
-    """
-    def post(self, pk):
-        libro = get_object_or_404(Libro, pk=pk)
-        prestamo = 
-        prestamo.disponibilidad = "D"
+class Devolver_Libro(View):
+    def post(self):
+        libro = get_object_or_404(Libro, pk=self.kwargs["pk"])
+        prestamo = get_object_or_404(
+            Prestamo, usuario=self.request.user, estado="P", libro=libro
+        )
+        prestamo.estado = "D"
         prestamo.save()
-        libro.disponibilidad = "D"
+        libro.disponibilidad = "P"
         libro.save()
         return redirect("listar")
 
-    """
+
+# Editar mañana
+class Buscar_Libro(ListView):
+    model = Libro
+    template_name_suffix = "_buscar"
+
+    def get_queryset(self):
+        titulo = self.request.GET.get("titulo")
+        return Libro.objects.filter(titulo__icontains=titulo)
