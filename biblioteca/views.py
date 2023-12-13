@@ -8,6 +8,7 @@ from django.views.generic import (
     DetailView,
     View,
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Libro, Autor, Prestamo, Usuario
 from django.shortcuts import redirect
@@ -36,7 +37,9 @@ class Listar_libros(ListView):
 
 class Editar_libro(UpdateView):
     model = Libro
+    fields = "__all__"
     template_name_suffix = "_update_form"
+    success_url = reverse_lazy("listar")
 
 
 class Eliminar_libro(DeleteView):
@@ -100,14 +103,19 @@ class Libros_disponibles(View):
         return render(request, "biblioteca/libros_disponibles.html", {"libros": libros})
 
 
-class Libros_reservados(View):
-    def get(self, request):  # obtener el usuario logueado
-        reservas = Prestamo.objects.filter(usuario=request.user).order_by(
-            "fecha_creacion"
+class Mis_libros(ListView):
+    model = Prestamo
+    template_name_suffix = "_mios"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["libros_devueltos"] = Prestamo.objects.filter(
+            usuario=self.request.user, estado="D"
         )
-        return render(
-            request, "biblioteca/libros_reservados.html", {"reservas": reservas}
+        context["libros_prestados"] = Prestamo.objects.filter(
+            usuario=self.request.user, estado="P"
         )
+        return context
 
 
 class Crear_prestamo(CreateView):
@@ -125,11 +133,29 @@ class Crear_prestamo(CreateView):
         return super().form_valid(form)
 
 
-class Devolver_Libro(View):
-    def delete(self, request, pk):
+class Devolver_Libro(UpdateView):
+    model = Prestamo
+    fields = "__all__"
+    template_name_suffix = "_update_form"
+    success_url = reverse_lazy("listar")
+
+    def form_valid(self, form):
+        libro = Libro.objects.get(pk=self.kwargs["pk"])
+        form.instance.usuario = self.request.user
+        form.instance.libro = libro
+        form.instance.estado = "D"
+        libro.disponibilidad = "D"
+        libro.save()
+        return super().form_valid(form)
+
+    """
+    def post(self, pk):
         libro = get_object_or_404(Libro, pk=pk)
-        prestamo = Prestamo.objects.filter(disponibilidad="P", usuario=request.user)
-        prestamo.update(disponibilidad="D")
+        prestamo = 
+        prestamo.disponibilidad = "D"
+        prestamo.save()
         libro.disponibilidad = "D"
         libro.save()
         return redirect("listar")
+
+    """

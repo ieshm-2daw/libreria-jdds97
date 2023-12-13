@@ -1,21 +1,22 @@
-{% extends 'biblioteca/base.html'%}
-{%block content%}
+{% extends 'biblioteca/base.html'%} {%block content%}
 <h1>Titulo - {{libro.titulo}}</h1>
-    <h2>Autor - {{libro.autor}}</h2>
-    <h2>Editorial - {{libro.editorial}}</h2>
-    <h2>Fecha - {{libro.fecha_publicacion}}</h2>
-    <h2>Rating - {{libro.rating}}</h2>
-    <h2>Genero - {{libro.genero}}</h2>
-    <h2>ISBN - {{libro.ISBN}}</h2>
-    <p>Resumen - {{libro.resumen}}</p>
-    {%if libro.portada %}
-    <img src="{{libro.portada.url}}" alt="" width="300"/>
-    {%endif%}
-    <br>
-    <h3>disponibilidad - {{libro.disponibilidad}}</h3>
-    <a href="{% url 'borrar' libro.pk%}">Borrar libro</a>
-    <a href="{% url 'listar' %}">Volver a los libros</a>
-    <a href="{% url 'editar' libro.pk %}">Editar libro</a>
-    <a href="{% url 'prestamo' libro.pk %}">Reservar libro</a>
-    
+<h2>Autor - {{libro.autor}}</h2>
+<h2>Editorial - {{libro.editorial}}</h2>
+<h2>Fecha - {{libro.fecha_publicacion}}</h2>
+<h2>Rating - {{libro.rating}}</h2>
+<h2>Genero - {{libro.genero}}</h2>
+<h2>ISBN - {{libro.ISBN}}</h2>
+<p>Resumen - {{libro.resumen}}</p>
+{%if libro.portada %}
+<img src="{{libro.portada.url}}" alt="" width="300" />
+{%endif%}
+<br />
+<h3>disponibilidad - {{libro.disponibilidad}}</h3>
+<a href="{% url 'borrar' libro.pk%}" class="btn btn-primary">Borrar libro</a>
+<a href="{% url 'listar' %}" class="btn btn-primary">Volver a los libros</a>
+<a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
+<a href="{% url 'prestamo' libro.pk %}" class="btn btn-primary"
+  >Reservar libro</a
+>
+
 {%endblock%}

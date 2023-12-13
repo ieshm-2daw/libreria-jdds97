@@ -1,26 +1,41 @@
 {% extends 'biblioteca/base.html'%} {% block content %}
 <h1>Lista de libros</h1>
-<a href="{%url 'libros_disponibles'%}" class="btn btn-primary text-end"
-  >Libros Disponibles</a
->
-<a href="{%url 'crear'%}" class="btn btn-primary">Crear libro</a>
+<a href="{% url 'libros_disponibles'%}" class="btn btn-primary text-end">
+  Libros Disponibles
+</a>
+<a href="{% url 'crear'%}" class="btn btn-primary">Crear libro</a>
+<a href="{% url 'mis_libros'%}" class="btn btn-primary">Mis libros</a>
 {% if libro_list is empty %}
 <p>No hay libros en la biblioteca.</p>
 {% else %}
-<ul class="listado-libros">
+<div class="row mt-5">
   {% for libro in libro_list %}
-  <li class="shadow-lg p-3">
-    -Título - {{ libro.titulo }} <br />
-    -Autor - {{ libro.autor }} <br />
-    -Editorial - {{ libro.editorial }}<br />
-    :
-  </li>
-</ul>
-<div class="d-flex justify-content-center mt-3">
-  <a href="{% url 'detalle' libro.pk %}" class="btn btn-primary">Ver detalle</a>
-  <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
-  <a href="{% url 'borrar' libro.pk %}" class="btn btn-primary"
-    >Eliminar libro</a
-  >
+  <div class="col-md-6">
+    <ul class="listado-libros ">
+      <li class="shadow-lg p-3 text-decoration-none">
+        <strong>Título:</strong>
+        {{ libro.titulo }}
+        <br />
+        <strong>Autor:</strong>
+        {{ libro.autor }}
+        <br />
+        <strong>Editorial:</strong>
+        {{ libro.editorial }}
+        <br />
+      </li>
+    </ul>
+    <div class="d-flex justify-content-center mt-3">
+      <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
+        Ver detalle
+      </a>
+      <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">
+        Editar libro
+      </a>
+      <a href="{% url 'borrar' libro.pk %}" class="btn btn-primary">
+        Eliminar libro
+      </a>
+    </div>
+  </div>
+  {% endfor %}
 </div>
-{% endfor %} {% endif %} {% endblock content%}
+{% endif %} {% endblock content%}

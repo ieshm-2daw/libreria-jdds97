@@ -1,7 +1,10 @@
-{& extends 'biblioteca/base.html'&}
-{%block content%}
-<form action="{% 'editar'%}" method="post" enctype="multipart/form-data" >
-    {%csrf_token%}
-    {{form.as_p}}
+{% extends 'biblioteca/base.html'%} {%block content %}
+<form
+  action="{% url 'editar' libro.pk%}"
+  method="post"
+  enctype="multipart/form-data"
+>
+  {%csrf_token%} {{form.as_p}}
+  <button type="submit">Confirmar</button>
 </form>
 {%endblock%}

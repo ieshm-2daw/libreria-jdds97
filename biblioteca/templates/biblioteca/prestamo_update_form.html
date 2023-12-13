@@ -1,0 +1,25 @@
+{% extends 'biblioteca/base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Titulo - {{ prestamo.libro.titulo }}</h1>
+          <h2>Autor - {{ prestamo.libro.autor }}</h2>
+          <h2>Editorial - {{ prestamo.libro.editorial }}</h2>
+          <h2>Fecha - {{ prestamo.libro.fecha_publicacion }}</h2>
+          <h2>Rating - {{ prestamo.libro.rating }}</h2>
+          <h2>Genero - {{ prestamo.libro.genero }}</h2>
+          <h2>ISBN - {{  prestamo.libro.ISBN }}</h2>
+          <form action="{%url 'devolver' prestamo.libro.pk %}" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit" value="Confirmar" class="btn btn-primary">
+              Confirmar Devolución
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
