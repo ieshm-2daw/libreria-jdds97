@@ -1,34 +1,5 @@
-{% extends 'biblioteca/base.html'%} {% block content %}
-
-<div class="row">
-  <div class="col-md-6">
-    <h1>Lista de libros</h1>
-  </div>
-  <div class="col-md-6">
-    <form action="{% url  'buscar' %}" method="GET" class="d-flex mt-4">
-      <input
-        type="text"
-        name="titulo"
-        class="form-control"
-        placeholder="Buscar"
-      />
-      {% csrf_token %}
-      <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
-    <a
-      href="{% url 'libros_disponibles' usuario=request.user %}"
-      class="btn btn-primary text-end"
-    >
-      Libros Disponibles
-    </a>
-    <a href="{% url 'crear'%}" class="btn btn-primary">Crear libro</a>
-    <a href="{% url 'mis_libros' %}" class="btn btn-primary">Mis libros</a>
-  </div>
-</div>
-
-{% if libro_list is empty %}
-<p>No hay libros en la biblioteca.</p>
-{% else %}
+{% extends 'biblioteca/base.html'%}{% block title %}Nuevo libro {% endblock%}
+{%block other_content %} Listado de libros {% endblock %} {% block content %}
 <style>
   .listado-libros {
     list-style: none;
@@ -43,7 +14,7 @@
   }
 </style>
 <div class="row mt-5 mb-5">
-  {% for libro in libro_list %}
+  {% if libro_list %} {% for libro in libro_list %}
   <div class="row shadow-lg p-3">
     <div class="col-md-8">
       <ul class="listado-libros">
@@ -88,6 +59,6 @@
     </a>
   </div>
 
-  {% endfor %}
+  {% endfor %} {% endif %}
 </div>
-{% endif %} {% endblock content%}
+{% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'biblioteca/base.html'%} {% block content %} {% block title%}Mis
-libros{%endblock title%}
+libros{%endblock title%} {% block other_content %}Libros de {{request.user.username}}
+{%endblock%}
 <h1>Libros prestados</h1>
 {%for prestamo in libros_prestados%}
 <div class="card" style="width: 18rem">
@@ -9,7 +10,10 @@ libros{%endblock title%}
     <p class="card-text">{{prestamo.usuario}}</p>
     <p class="card-text">{{prestamo.fecha_prestamo}}</p>
     <p class="card-text">{{prestamo.fecha_devolucion}}</p>
-    <a href="{% url 'devolver' prestamo.libro.pk %}" class="btn btn-primary">
+    <a
+      href="{% url 'devolver' usuario=request.user.username pk=prestamo.libro.pk %}"
+      class="btn btn-primary"
+    >
       Devolver
     </a>
   </div>

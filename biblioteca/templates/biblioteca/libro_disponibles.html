@@ -1,8 +1,9 @@
-{%extends 'biblioteca/base.html'%} {% load static %} {% block title %}Libros
-Disponibles {%endblock title %}{% block content %}
-<div class="row mt-3">
-  {% for libro in libros %}
-  <div class="col-md-6 shadow-lg p-3">
+{%extends 'biblioteca/base.html'%} {% block title %}Libros Disponibles
+{%endblock title %} {%block other_content%}Libros disponibles
+{{libro.title}}{%endblock%}{% block content %}
+<div class="row mt-5">
+  {% for libro in libro_list %}
+  <div class="col-md-8 shadow-lg p-3 my-5">
     <h1 class="display-4">Titulo - {{libro.titulo}}</h1>
     <h2>Autor - {{libro.autor}}</h2>
     <h2>Editorial - {{libro.editorial}}</h2>
@@ -17,13 +18,16 @@ Disponibles {%endblock title %}{% block content %}
     <img src="{{libro.portada.url}}" alt="" class="img-fluid" width="300" />
     {% endif %}
     <h3>Disponibilidad - {{libro.disponibilidad}}</h3>
+    <div>
+      <a href="{% url 'detalles' pk=libro.pk %}" class="btn btn-primary">
+        Enlace al Libro {{libro.titulo}}
+      </a>
+      <a href="{% url 'borrar' pk=libro.pk%}" class="btn btn-danger">
+        Eliminar {{libro.titulo}}
+      </a>
+    </div>
   </div>
-  <a href="{% url 'detalles' pk=libro.pk %}" class="btn btn-primary">
-    Enlace al Libro {{libro.titulo}}
-  </a>
-  <a href="{% url 'borrar' pk=libro.pk%}" class="btn btn-danger">
-    Eliminar {{libro.titulo}}
-  </a>
+
   {% endfor %}
 </div>
 {% endblock content %}

@@ -10,8 +10,11 @@
           <h2>Fecha - {{ prestamo.libro.fecha_publicacion }}</h2>
           <h2>Rating - {{ prestamo.libro.rating }}</h2>
           <h2>Genero - {{ prestamo.libro.genero }}</h2>
-          <h2>ISBN - {{  prestamo.libro.ISBN }}</h2>
-          <form action="{%url 'devolver' prestamo.libro.pk %}" method="post">
+          <h2>ISBN - {{ prestamo.libro.ISBN }}</h2>
+          <form
+            action="{%url 'devolver' usuario=request.user.username pk=prestamo.libro.pk %}"
+            method="post"
+          >
             {% csrf_token %} {{ form.as_p }}
             <button type="submit" value="Confirmar" class="btn btn-primary">
               Confirmar Devolución

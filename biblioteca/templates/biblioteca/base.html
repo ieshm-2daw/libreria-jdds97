@@ -22,6 +22,40 @@
     <script src="main.js"></script>
   </head>
   <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1 class="display-2">{% block other_content %}{% endblock %}</h1>
+        </div>
+        <div class="col-md-6">
+          <form action="{% url  'buscar' %}" method="GET" class="d-flex mt-4">
+            <input
+              type="text"
+              name="titulo"
+              class="form-control"
+              placeholder="Buscar"
+            />
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Buscar</button>
+          </form>
+          <a
+            href="{% url 'libros_disponibles' usuario=request.user %}"
+            class="btn btn-primary text-end"
+          >
+            Libros Disponibles
+          </a>
+          <a href="{% url 'crear'%}" class="btn btn-primary">Crear libro</a>
+          <a
+            href="{% url 'mis_libros' usuario=request.user.id %}"
+            class="btn btn-primary"
+          >
+            Mis libros
+          </a>
+          <a href="{% url 'listar' %}" class="btn btn-warning">Volver a los libros</a>
+        </div>
+      </div>
+    </div>
+
     <div class="container ">
       
         {%block content %}{%endblock%}

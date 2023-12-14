@@ -1,25 +1,38 @@
-{% extends 'biblioteca/base.html'%} {% block content %}
-<div class="container shadow-lg p-3">
-  <h1 class="display-4">Titulo - {{libro.titulo}}</h1>
-  <h2>Autor - {{libro.autor}}</h2>
-  <h2>Editorial - {{libro.editorial}}</h2>
-  <h2>Fecha - {{libro.fecha_publicacion}}</h2>
-  <h2>Rating - {{libro.rating}}</h2>
-  <h2>Genero - {{libro.genero}}</h2>
-  <h2>ISBN - {{libro.ISBN}}</h2>
-  <h1 class="display-5">Resumen</h1>
-  <p>{{libro.resumen}}</p>
-  {% if libro.portada %}
-  <img src="{{libro.portada.url}}" alt="" class="img-fluid" />
-  {% endif %}
-  <br />
-  <h3>Disponibilidad - {{libro.disponibilidad}}</h3>
-  <br />
-  <a href="{% url 'borrar' libro.pk%}" class="btn btn-danger">Borrar libro</a>
-  <a href="{% url 'listar' %}" class="btn btn-warning">Volver a los libros</a>
-  <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
-  <a href="{% url 'prestamo' libro.pk %}" class="btn btn-success">
-    Reservar libro
-  </a>
+{% extends 'biblioteca/base.html'%} {%block title%}Detalles del libro{%endblock title%}{%block other_content%}Detalles del libro
+{{libro.title}}{%endblock%} 
+{% block content %}
+<div class="row mt-5">
+  <div class="col-12 shadow-lg p-3">
+    <h1 class="display-4">Titulo - {{libro.titulo}}</h1>
+    <h2>Autor - {{libro.autor}}</h2>
+    <h2>Editorial - {{libro.editorial}}</h2>
+    <h2>Fecha - {{libro.fecha_publicacion}}</h2>
+    <h2>Rating - {{libro.rating}}</h2>
+    <h2>Genero - {{libro.genero}}</h2>
+    <h2>ISBN - {{libro.ISBN}}</h2>
+    <h1 class="display-5">Resumen</h1>
+    <p>{{libro.resumen}}</p>
+    {% if libro.portada %}
+    <img src="{{libro.portada.url}}" alt="" class="img-fluid" />
+    {% endif %}
+    <br />
+    <h3>Disponibilidad - {{libro.disponibilidad}}</h3>
+    <br />
+  
+  </div>
+  <div class="row">
+    <div class="col-6 mt-3">
+      <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">Borrar libro</a>
+      <a href="{% url 'listar' %}" class="btn btn-warning">Volver a los libros</a>
+      <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
+      <a
+        href="{% url 'prestamo' request.user.username libro.pk %}"
+        class="btn btn-success"
+      >
+        Reservar libro
+      </a>
+    </div>
+  </div>
+  
 </div>
 {% endblock %}

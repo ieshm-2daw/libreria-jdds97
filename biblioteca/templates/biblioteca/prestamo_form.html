@@ -1,16 +1,10 @@
-{% extends 'biblioteca/base.html'%} {%block content%}
-<h1>Titulo - {{libro.titulo}}</h1>
-<h2>Autor - {{libro.autor}}</h2>
-<h2>Editorial - {{libro.editorial}}</h2>
-<h2>Fecha - {{libro.fecha_publicacion}}</h2>
-<h2>Rating - {{libro.rating}}</h2>
-<h2>Genero - {{libro.genero}}</h2>
-<h2>ISBN - {{libro.ISBN}}</h2>
-<form action="{% url 'prestamo' libro.pk %} " method="post">
-  {%csrf_token%} {{form.as_p}}
-  <button type="submit" value="Confirmar" class="btn btn-primary">
-    Confirmar disponibilidad
-  </button>
-</form>
+{% extends 'biblioteca/base.html'%} {% block title %}Reservar libro{% endblock  %} {% block other_content %}Reservar libro para
+{{request.user.username}}{% endblock %} {% block content %}
+<form  method="post" class="form">
 
-{%endblock%}
+  {% csrf_token %}
+  <div class="form-group">{{form.as_p}}</div>
+  <input type="submit" value="Reservar libro" class="btn btn-primary" />
+  <a href="{% url 'listar'%}" class="btn btn-danger">Cancelar</a>
+</form>
+{% endblock %}

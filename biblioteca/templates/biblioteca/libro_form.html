@@ -1,4 +1,5 @@
-{% extends 'biblioteca/base.html'%} {%block content%}
+{% extends 'biblioteca/base.html'%} {% block title %}Nuevo libro {%endblock title%} {%block other_content%}Añadir nuevo libro a la biblioteca{%endblock%}
+{%block content%}
 <form
   action="{% url 'crear'%}"
   enctype="multipart/form-data"
@@ -16,5 +17,4 @@
     </a>
   </div>
 </form>
-
-{%endblock%}
+{% endblock %}

@@ -1,123 +1,172 @@
+"""
+Este módulo contiene las vistas de la aplicación biblioteca.
+"""
 from typing import Any
+from datetime import datetime
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.views.generic import (
     CreateView,
     ListView,
     UpdateView,
     DeleteView,
     DetailView,
-    View,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from .models import Libro, Autor, Prestamo, Usuario
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
-
-from django.shortcuts import render
+from .models import Libro, Autor, Prestamo
 
 
 # pylint: disable=no-member
-class Crear_libro(CreateView):
+class CrearLibro(CreateView):
+    """
+    Vista para crear un nuevo libro.
+    """
+
     model = Libro
     fields = "__all__"
     success_url = reverse_lazy("listar")
 
 
-class Listar_libros(ListView):
-    model = Libro
+class ListarLibros(ListView):
     """
-    queryset=Libro.objects.filter(disponibilidad="D")
+    Vista para listar todos los libros.
+    """
 
-    """
+    model = Libro
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["libros_disponibles"] = Libro.objects.filter(disponibilidad="D")
-        context["libros_reservados"] = Libro.objects.filter(disponibilidad="R")
-
+        context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
+        context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
         return context
 
 
-class Editar_libro(UpdateView):
+class EditarLibro(UpdateView):
+    """
+    Vista para editar un libro existente.
+    """
+
     model = Libro
     fields = "__all__"
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("listar")
 
 
-class Eliminar_libro(DeleteView):
+class EliminarLibro(DeleteView):
+    """
+    Vista para eliminar un libro existente.
+    """
+
     model = Libro
     success_url = reverse_lazy("listar")
 
 
-class Detalles_libro(DetailView):
+class DetallesLibro(DetailView):
+    """
+    Vista para ver los detalles de un libro.
+    """
+
     model = Libro
 
 
-class Crear_autor(CreateView):
+class CrearAutor(CreateView):
+    """
+    Vista para crear un nuevo autor.
+    """
+
     model = Autor
     fields = "__all__"
     success_url = reverse_lazy("listar_autores")
 
 
-class Libros_disponibles(ListView):
+class LibrosDisponibles(ListView):
+    """
+    Vista para listar los libros disponibles.
+    """
+
     model = Libro
     queryset = Libro.objects.filter(disponibilidad="D")
     template_name_suffix = "_disponibles"
 
 
-class Mis_libros(ListView):
+class MisLibros(ListView):
+    """
+    Vista para listar los libros prestados y devueltos por el usuario actual.
+    """
+
     model = Prestamo
     template_name_suffix = "_mios"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-
-        context["libros_devueltos"] = Prestamo.objects.filter(
+        context["librosDevueltos"] = Prestamo.objects.filter(
             usuario=self.request.user, estado="D"
         )
-        context["libros_prestados"] = Prestamo.objects.filter(
+        context["librosPrestados"] = Prestamo.objects.filter(
             usuario=self.request.user, estado="P"
         )
         return context
 
 
-# Arreglar prestamo para el usuario
-class Crear_prestamo(CreateView):
+class CrearPrestamo(CreateView):
+    """
+    Vista para crear un nuevo préstamo de libro.
+    """
+
     model = Prestamo
-    success_url = reverse_lazy("listar")
+    fields = ["estado"]
 
-    def get(self, request, *args, **kwargs):
-        libro = Libro.objects.get(pk=self.kwargs["pk"])
-        prestamo = Prestamo.objects.get(
-            libro=libro,
-            usuario=self.request.user,
-        )
-        prestamo.save()
-        libro.disponibilidad = "P"
-        libro.save()
-        return redirect(self.get_success_url())
-
-
-class Devolver_Libro(View):
-    def get(self, request, pk):
-        libro = Libro.objects.filter(pk=pk).first()
-        return render(request, {"libro": libro}, self.template_name)
-
-    def post(self):
+    def form_valid(self, form):
         libro = get_object_or_404(Libro, pk=self.kwargs["pk"])
-        prestamo = get_object_or_404(
-            Prestamo, usuario=self.request.user, estado="P", libro=libro
-        )
+        usuario = self.request.user
+
+        prestamo_existente = Prestamo.objects.filter(
+            libro=libro, usuario=usuario
+        ).exists()
+
+        if not prestamo_existente:
+            prestamo = form.save()
+            prestamo.libro = libro
+            prestamo.usuario = usuario
+            prestamo.estado = "P"
+            prestamo.fecha_prestamo = datetime.now()
+
+            prestamo.save()
+
+            libro.disponibilidad = "P"
+            libro.save()
+
+            return super().form_valid(form)
+
+        return redirect("detalles", pk=libro.pk)
+
+
+class DevolverLibro(UpdateView):
+    """
+    Vista para devolver un libro prestado.
+    """
+
+    model = Prestamo
+    fields = ["estado"]
+    template_name_suffix = "_update_form"
+    success_url = reverse_lazy("mis_libros")
+
+    def form_valid(self, form):
+        prestamo = form.save()
         prestamo.estado = "D"
         prestamo.save()
-        libro.disponibilidad = "P"
+        libro = prestamo.libro
+        libro.disponibilidad = "D"
         libro.save()
-        return redirect("listar")
+        return redirect("mis_libros", self.request.user)
 
 
-class Buscar_Libro(ListView):
+class BuscarLibro(ListView):
+    """
+    Vista para buscar libros por título.
+    """
+
     model = Libro
     template_name = "biblioteca/libro_buscar.html"
 

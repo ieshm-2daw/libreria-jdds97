@@ -1,5 +1,6 @@
-{% extends 'biblioteca/base.html'%} {% block content %}
-<h1 class="mt-5">Editar libro</h1>
+{% extends 'biblioteca/base.html'%} {% block title %}Editar libro {%endblock title %} {%block other_content%}Editar libro {{libro.titulo}}{%endblock%}
+{%block content %}
+
 <form
   class="form mt-5"
   action="{% url 'editar' libro.pk%}"

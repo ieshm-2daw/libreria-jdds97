@@ -1,9 +1,10 @@
-{% extends 'biblioteca/base.html'%}
-{%block content%}
-<h1>Eliminar libro - {{libro.title}}</h1>
-<form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete {{ book.title }}?</p>
-    {{ form.as_p }}
-    <input type="submit" value="Confirm">
+{% extends 'biblioteca/base.html'%} {%block title%}Eliminar libro{%endblock title%}{%block content%} {%block other_content%}Eliminar libro
+{{libro.title}}{%endblock%}
+<form method="post">
+  {% csrf_token %}
+  <p>¿Estas seguro de que quieres eliminar el libro? {{ book.title }}?</p>
+  {{ form.as_p }}
+  <input type="submit" value="Confirmar Eliminación" class="btn btn-danger" />
+  <a href="{% url 'listar' %}" class="btn btn-primary">Cancelar</a>
 </form>
 {%endblock%}

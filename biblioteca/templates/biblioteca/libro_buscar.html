@@ -1,4 +1,6 @@
-{% extends 'biblioteca/base.html'%} {% block content %} {%for libro in libros%}
+{% extends 'biblioteca/base.html'%} {%block title%}Resultados de
+búsqueda{%endblock title%} {%block other_content%}Resultados de
+búsqueda{%endblock%}{%block content %} {%for libro in libros%}
 <div class="container shadow-lg p-3">
   <h1 class="display-4">Titulo - {{libro.titulo}}</h1>
   <h2>Autor - {{libro.autor}}</h2>
