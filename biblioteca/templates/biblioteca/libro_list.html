@@ -5,8 +5,14 @@
     <h1>Lista de libros</h1>
   </div>
   <div class="col-md-6">
-    <form action="{% url 'buscar' %}" method="GET" class="d-flex mt-4">
-      <input type="text" name="q" class="form-control" placeholder="Buscar" />
+    <form action="{% url  'buscar' %}" method="GET" class="d-flex mt-4">
+      <input
+        type="text"
+        name="titulo"
+        class="form-control"
+        placeholder="Buscar"
+      />
+      {% csrf_token %}
       <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
     <a
@@ -16,7 +22,7 @@
       Libros Disponibles
     </a>
     <a href="{% url 'crear'%}" class="btn btn-primary">Crear libro</a>
-    <a href="{% url 'mis_libros'%}" class="btn btn-primary">Mis libros</a>
+    <a href="{% url 'mis_libros' %}" class="btn btn-primary">Mis libros</a>
   </div>
 </div>
 
@@ -36,34 +42,55 @@
     width: 100px;
   }
 </style>
-<div class="row mt-5">
+<div class="row mt-5 mb-5">
   {% for libro in libro_list %}
-  <div class="col-md-6">
-    <ul class="listado-libros">
-      <li class="shadow-lg p-3">
-        <strong>Título:</strong>
-        {{ libro.titulo }}
-        <br />
-        <strong>Autor:</strong>
-        {{ libro.autor }}
-        <br />
-        <strong>Editorial:</strong>
-        {{ libro.editorial }}
-        <br />
-      </li>
-    </ul>
-    <div class="mt-3">
-      <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
-        Ver detalle
-      </a>
-      <a href="{% url 'editar' libro.pk %}" class="btn btn-warning">
-        Editar libro
-      </a>
-      <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">
-        Eliminar libro
-      </a>
+  <div class="row shadow-lg p-3">
+    <div class="col-md-8">
+      <ul class="listado-libros">
+        <li class="">
+          <strong>Título:</strong>
+          {{ libro.titulo }}
+          <br />
+          <strong>Autor:</strong>
+          {{ libro.autor }}
+          <br />
+          <strong>Editorial:</strong>
+          {{ libro.editorial }}
+          <br />
+          <strong>Valoracion:</strong>
+          {%if libro.valoracion>4 %}
+
+          
+          {{ libro.valoracion }}
+          <br />
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      {%if libro.portada%}
+      <img
+        src="{{ libro.portada.url}}"
+        alt="{{
+          libro.titulo
+          }}"
+        class="img-fluid d-flex justify-content-end"
+      />
+      {%endif%}
     </div>
   </div>
+
+  <div class="my-3">
+    <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
+      Ver detalle
+    </a>
+    <a href="{% url 'editar' libro.pk %}" class="btn btn-warning">
+      Editar libro
+    </a>
+    <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">
+      Eliminar libro
+    </a>
+  </div>
+
   {% endfor %}
 </div>
 {% endif %} {% endblock content%}

@@ -14,6 +14,8 @@ from .models import Libro, Autor, Prestamo, Usuario
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 
+from django.shortcuts import render
+
 
 # pylint: disable=no-member
 class Crear_libro(CreateView):
@@ -33,6 +35,7 @@ class Listar_libros(ListView):
         context = super().get_context_data(**kwargs)
         context["libros_disponibles"] = Libro.objects.filter(disponibilidad="D")
         context["libros_reservados"] = Libro.objects.filter(disponibilidad="R")
+
         return context
 
 
@@ -98,6 +101,10 @@ class Crear_prestamo(CreateView):
 
 
 class Devolver_Libro(View):
+    def get(self, request, pk):
+        libro = Libro.objects.filter(pk=pk).first()
+        return render(request, {"libro": libro}, self.template_name)
+
     def post(self):
         libro = get_object_or_404(Libro, pk=self.kwargs["pk"])
         prestamo = get_object_or_404(
@@ -110,11 +117,12 @@ class Devolver_Libro(View):
         return redirect("listar")
 
 
-# Editar mañana
 class Buscar_Libro(ListView):
     model = Libro
-    template_name_suffix = "_buscar"
+    template_name = "biblioteca/libro_buscar.html"
 
-    def get_queryset(self):
-        titulo = self.request.GET.get("titulo")
-        return Libro.objects.filter(titulo__icontains=titulo)
+    def get(self, request, *args, **kwargs):
+        titulo = request.GET.get("titulo")
+        libros = Libro.objects.filter(titulo__icontains=titulo)
+        context = {"libros": libros, "titulo": titulo}
+        return render(request, self.template_name, context)
