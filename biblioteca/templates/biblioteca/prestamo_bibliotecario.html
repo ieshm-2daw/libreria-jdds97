@@ -1,0 +1,65 @@
+{% extends 'biblioteca/base.html'%}{% block title %}Nuevo libro {% endblock%}
+{%block other_content %} Panel de control del bibliotecario {% endblock %} {%
+block content %}
+<style>
+  .listado-libros {
+    list-style: none;
+    padding: 0;
+  }
+  .listado-libros li {
+    margin-bottom: 1rem;
+  }
+  .listado-libros li strong {
+    display: inline-block;
+    width: 100px;
+  }
+</style>
+<div class="row mt-5 mb-5">
+  {% if libro_list %} {% for libro in libro_list %}
+  <div class="row shadow-lg p-3">
+    <div class="col-md-8">
+      <ul class="listado-libros">
+        <li class="">
+          <strong>Título:</strong>
+          {{ libro.titulo }}
+          <br />
+          <strong>Autor:</strong>
+          {{ libro.autor }}
+          <br />
+          <strong>Editorial:</strong>
+          {{ libro.editorial }}
+          <br />
+          <strong>Valoracion:</strong>
+          <!--Filtrar que el numero de estrellas sea el numero de valoracion-->
+          <br />
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      {%if libro.portada%}
+      <img
+        src="{{ libro.portada.url}}"
+        alt="{{
+          libro.titulo
+          }}"
+        class="img-fluid d-flex justify-content-end"
+      />
+      {%endif%}
+    </div>
+  </div>
+
+  <div class="my-3">
+    <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
+      Ver detalle
+    </a>
+    <a href="{% url 'editar' libro.pk %}" class="btn btn-warning">
+      Editar libro
+    </a>
+    <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">
+      Eliminar libro
+    </a>
+  </div>
+
+  {% endfor %} {% endif %}
+</div>
+{% endblock %}

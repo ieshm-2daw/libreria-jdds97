@@ -13,6 +13,7 @@ from .views import (
     LibrosDisponibles,
     MisLibros,
     BuscarLibro,
+    Bibliotecario,
 )
 from .views import CrearAutor
 
@@ -41,4 +42,6 @@ urlpatterns = [
     ),
     path("mis_libros/<str:usuario>/", MisLibros.as_view(), name="mis_libros"),
     path("buscar/", BuscarLibro.as_view(), name="buscar"),
+    # añademe la view de bibliotecario
+    path("bibliotecario/", Bibliotecario.as_view(), name="bibliotecario"),
 ]

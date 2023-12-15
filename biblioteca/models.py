@@ -12,7 +12,7 @@ class Usuario(AbstractUser):
     Hereda de la clase AbstractUser de Django.
     """
 
-    dni = models.CharField(max_length=10, unique=True)
+    dni = models.CharField(max_length=10)
     direccion = models.CharField(max_length=200)
     telefono = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(9)], null=True
@@ -36,9 +36,7 @@ class Libro(models.Model):
         "Editorial", on_delete=models.CASCADE, blank=True, null=True
     )
     fecha_publicacion = models.DateField()
-    rating = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(5)]
-    )
+    rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     genero = models.CharField(max_length=100)
     ISBN = models.CharField(max_length=13)
     resumen = models.TextField()
@@ -98,7 +96,7 @@ class Prestamo(models.Model):
     Modelo que representa un préstamo de un libro a un usuario.
     """
 
-    libro = models.ForeignKey("Libro", on_delete=models.CASCADE)
+    libro = models.OneToOneField("Libro", on_delete=models.CASCADE)
     usuario = models.ForeignKey("Usuario", on_delete=models.CASCADE)
     fecha_prestamo = models.DateField()
     fecha_devolucion = models.DateField(null=True, blank=True)

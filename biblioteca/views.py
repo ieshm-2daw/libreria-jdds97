@@ -2,7 +2,9 @@
 Este módulo contiene las vistas de la aplicación biblioteca.
 """
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timedelta
+from urllib import request
+from django.db.models import Case, Value, When
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -15,7 +17,8 @@ from django.views.generic import (
     DetailView,
     View,
 )
-from .models import Libro, Autor, Prestamo
+from .models import Libro, Autor, Prestamo, Usuario
+from django.db.models import Max
 
 
 # pylint: disable=no-member
@@ -34,13 +37,28 @@ class Bibliotecario(ListView):
     Vista para listar todos los libros.
     """
 
-    model = Libro
+    model = Prestamo
+    queryset = Libro.objects.filter(disponibilidad="D")
+    template_name_suffix = "_bibliotecario"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
-        context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
-        return context
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+        if self.request.user == "bibliotecario":
+            context = super().get_context_data(**kwargs)
+            context["numeroPrestamos"] = Prestamo.objects.count()
+            context["numeroDisponibles"] = Libro.objects.filter(
+                disponibilidad="D"
+            ).count()
+            print(context["numeroDisponibles"])
+            context["librosNoDevueltos"] = Prestamo.objects.filter(
+                fecha_devolucion__lt=datetime.now()
+            )
+            context["librosAdevolver"] = Prestamo.objects.filter(
+                fecha__devolucion__gt=datetime.now() - timedelta(days=7)
+            )
+            context["topLibros"] = Libro.objects.filter(valoracion__gte=4)
+            context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
+            context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
+            return context
 
 
 class ListarLibros(ListView):
@@ -54,6 +72,9 @@ class ListarLibros(ListView):
         context = super().get_context_data(**kwargs)
         context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
         context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
+        context["librosBusqueda"] = Libro.objects.filter(
+            titulo__icontains=self.request.GET.get("titulo")
+        )
         return context
 
 
