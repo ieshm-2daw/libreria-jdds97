@@ -26,7 +26,7 @@
       <a href="{% url 'listar' %}" class="btn btn-warning">Volver a los libros</a>
       <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
       <a
-        href="{% url 'prestamo' request.user.username libro.pk %}"
+        href="{% url 'prestamo' libro.pk %}"
         class="btn btn-success"
       >
         Reservar libro

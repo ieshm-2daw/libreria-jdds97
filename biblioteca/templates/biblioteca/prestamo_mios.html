@@ -1,10 +1,10 @@
 {% extends 'biblioteca/base.html'%} {% block content %} {% block title%}Mis
-libros{%endblock title%} {% block other_content %}Libros de {{request.user.username}}
+libros{%endblock %} {% block other_content %}Libros de {{request.user.username}}
 {%endblock%}
-<h1>Libros prestados</h1>
-{%for prestamo in libros_prestados%}
+<h1 class="display-3">Libros prestados</h1>
+{%for prestamo in librosPrestados%}
 <div class="card" style="width: 18rem">
-  <h1>{{prestamo.estado}}</h1>
+  <h1>Disponibilidad{{prestamo.estado}}</h1>
   <div class="card-body">
     <h5 class="card-title">{{prestamo.libro.titulo}}</h5>
     <p class="card-text">{{prestamo.usuario}}</p>
@@ -19,10 +19,10 @@ libros{%endblock title%} {% block other_content %}Libros de {{request.user.usern
   </div>
 </div>
 {%endfor%}
-<h1>Libros devueltos</h1>
-{%for prestamo in libros_devueltos%}
+<h1 class="display-3">Libros devueltos</h1>
+{%for prestamo in librosDevueltos%}
 <div class="card" style="width: 18rem">
-  <img src="{{prestamo.libro.imagen.url}}" class="card-img-top" alt="..." />
+  <img src="{{prestamo.libro.portada.url}}" class="card-img-top" alt="..." />
   <div class="card-body">
     <h5 class="card-title">{{prestamo.libro.titulo}}</h5>
     <p class="card-text">{{prestamo.usuario}}</p>

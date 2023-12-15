@@ -13,6 +13,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     DetailView,
+    View,
 )
 from .models import Libro, Autor, Prestamo
 
@@ -26,6 +27,20 @@ class CrearLibro(CreateView):
     model = Libro
     fields = "__all__"
     success_url = reverse_lazy("listar")
+
+
+class Bibliotecario(ListView):
+    """
+    Vista para listar todos los libros.
+    """
+
+    model = Libro
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
+        context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
+        return context
 
 
 class ListarLibros(ListView):
@@ -109,36 +124,27 @@ class MisLibros(ListView):
         return context
 
 
-class CrearPrestamo(CreateView):
+class CrearPrestamo(View):
     """
     Vista para crear un nuevo préstamo de libro.
     """
 
-    model = Prestamo
-    fields = ["estado"]
+    def get(self, request, pk):
+        libro = get_object_or_404(Libro, pk=pk, disponibilidad="D")
+        return render(request, "biblioteca/prestamo_form.html", {"libro": libro})
 
-    def form_valid(self, form):
-        libro = get_object_or_404(Libro, pk=self.kwargs["pk"])
-        usuario = self.request.user
-
-        prestamo_existente = Prestamo.objects.filter(
-            libro=libro, usuario=usuario
-        ).exists()
-
-        if not prestamo_existente:
-            prestamo = form.save()
-            prestamo.libro = libro
-            prestamo.usuario = usuario
-            prestamo.estado = "P"
-            prestamo.fecha_prestamo = datetime.now()
-
-            prestamo.save()
-
-            libro.disponibilidad = "P"
-            libro.save()
-
-            return super().form_valid(form)
-
+    def post(self, request, pk):
+        libro = Libro.objects.get(pk=pk)
+        usuario = request.user
+        libro.disponibilidad = "P"
+        libro.save()
+        Prestamo.objects.create(
+            libro=libro,
+            fecha_prestamo=datetime.now(),
+            fecha_devolucion=None,
+            usuario=usuario,
+            estado="P",
+        )
         return redirect("detalles", pk=libro.pk)
 
 

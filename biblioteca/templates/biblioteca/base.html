@@ -46,7 +46,7 @@
           </a>
           <a href="{% url 'crear'%}" class="btn btn-primary">Crear libro</a>
           <a
-            href="{% url 'mis_libros' usuario=request.user.id %}"
+            href="{% url 'mis_libros' usuario=request.user.username %}"
             class="btn btn-primary"
           >
             Mis libros
