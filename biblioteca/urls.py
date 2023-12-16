@@ -4,6 +4,7 @@ URLs de la aplicación biblioteca.
 from django.urls import path
 from .views import (
     CrearLibro,
+    FiltrarCategoria,
     ListarLibros,
     EditarLibro,
     EliminarLibro,
@@ -42,6 +43,7 @@ urlpatterns = [
     ),
     path("mis_libros/<str:usuario>/", MisLibros.as_view(), name="mis_libros"),
     path("buscar/", BuscarLibro.as_view(), name="buscar"),
-    # añademe la view de bibliotecario
+    # añademe la view de filtrar por categoria
+    path("categoria/", FiltrarCategoria.as_view(), name="categoria"),
     path("bibliotecario/", Bibliotecario.as_view(), name="bibliotecario"),
 ]

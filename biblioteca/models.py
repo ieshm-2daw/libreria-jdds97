@@ -37,7 +37,7 @@ class Libro(models.Model):
     )
     fecha_publicacion = models.DateField()
     rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
-    genero = models.CharField(max_length=100)
+    genero = models.ManyToManyField("Genero", max_length=100)
     ISBN = models.CharField(max_length=13)
     resumen = models.TextField()
     DISPONIBILIDAD_CHOICES = (
@@ -57,6 +57,13 @@ class Libro(models.Model):
         Devuelve una representación en cadena del título del libro.
         """
         return str(self.titulo)
+
+
+class Genero(models.Model):
+    categoria = models.CharField(max_length=150)
+
+    def __str__(self):
+        return str(self.categoria)
 
 
 class Autor(models.Model):

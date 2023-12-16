@@ -1,4 +1,5 @@
 {% load static %} 
+{% load tags %} 
 <html>
   <head>
     <meta charset="utf-8" />
@@ -35,6 +36,20 @@
               class="form-control"
               placeholder="Buscar"
             />
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Buscar</button>
+          </form>
+          <h2 class="display-5">Filtrar por categoria</h2>
+          <form action="{% url  'categoria'%}" method="GET" class="d-flex mt-4">
+           
+            <article>
+              <select name="opciones" id="opciones" class="form-select">
+                {% get_genero as generos %} 
+                {%for categoria in generos %} 
+                  <option value="{{categoria}}">{{categoria}}</option> 
+                {%endfor%} 
+              </select>
+            </article>
             {% csrf_token %}
             <button type="submit" class="btn btn-primary">Buscar</button>
           </form>

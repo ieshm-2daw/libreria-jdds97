@@ -5,6 +5,7 @@ from typing import Any
 from datetime import datetime, timedelta
 from urllib import request
 from django.db.models import Case, Value, When
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -17,7 +18,7 @@ from django.views.generic import (
     DetailView,
     View,
 )
-from .models import Libro, Autor, Prestamo, Usuario
+from .models import Libro, Autor, Prestamo, Usuario, Genero
 from django.db.models import Max
 
 
@@ -72,9 +73,6 @@ class ListarLibros(ListView):
         context = super().get_context_data(**kwargs)
         context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
         context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
-        context["librosBusqueda"] = Libro.objects.filter(
-            titulo__icontains=self.request.GET.get("titulo")
-        )
         return context
 
 
@@ -150,13 +148,19 @@ class CrearPrestamo(View):
     Vista para crear un nuevo préstamo de libro.
     """
 
-    def get(self, request, pk):
+    def get(self, pk):
+        """
+        Get
+        """
         libro = get_object_or_404(Libro, pk=pk, disponibilidad="D")
-        return render(request, "biblioteca/prestamo_form.html", {"libro": libro})
+        return render(self.request, "biblioteca/prestamo_form.html", {"libro": libro})
 
-    def post(self, request, pk):
+    def post(self, pk):
+        """
+        Post
+        """
         libro = Libro.objects.get(pk=pk)
-        usuario = request.user
+        usuario = self.request.user
         libro.disponibilidad = "P"
         libro.save()
         Prestamo.objects.create(
@@ -197,8 +201,22 @@ class BuscarLibro(ListView):
     model = Libro
     template_name = "biblioteca/libro_buscar.html"
 
-    def get(self, request, *args, **kwargs):
-        titulo = request.GET.get("titulo")
+    def get(self, *args, **kwargs):
+        titulo = self.request.GET.get("titulo")
         libros = Libro.objects.filter(titulo__icontains=titulo)
         context = {"libros": libros, "titulo": titulo}
-        return render(request, self.template_name, context)
+        return render(self.request, self.template_name, context)
+
+
+class FiltrarCategoria(ListView):
+    model = Libro
+    queryset = Libro.objects.filter(disponibilidad="D")
+    template_name_suffix = "_categoria"
+
+    def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
+        opciones = self.request.GET.get("opciones")
+        if self.queryset is not None:
+            self.queryset = self.queryset.filter(
+                genero__in=Genero.objects.filter(categoria=opciones)
+            )
+        return super().get(*args, **kwargs)
