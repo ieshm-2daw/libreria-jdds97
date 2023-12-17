@@ -4,8 +4,8 @@ Este módulo contiene las vistas de la aplicación biblioteca.
 from typing import Any
 from datetime import datetime, timedelta
 from urllib import request
-from django.db.models import Case, Value, When
-from django.http import HttpRequest, HttpResponse
+from django.db.models import Case, Value, When, Max, Avg
+from django.http import  HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -18,8 +18,7 @@ from django.views.generic import (
     DetailView,
     View,
 )
-from .models import Libro, Autor, Prestamo, Usuario, Genero
-from django.db.models import Max
+from .models import Libro, Autor, Prestamo, Genero
 
 
 # pylint: disable=no-member
@@ -33,6 +32,7 @@ class CrearLibro(CreateView):
     success_url = reverse_lazy("listar")
 
 
+# Editar el martes 1
 class Bibliotecario(ListView):
     """
     Vista para listar todos los libros.
@@ -220,3 +220,70 @@ class FiltrarCategoria(ListView):
                 genero__in=Genero.objects.filter(categoria=opciones)
             )
         return super().get(*args, **kwargs)
+
+
+# Editar martes 2 lio de cosas gordas de documentacion django 
+"""
+
+class ValorarLibro(View):
+    def get(self,request,pk):
+        libro = get_object_or_404(Libro, pk=pk)
+        prestamo=Prestamo.objects.filter(libro=libro,usuario=request.user)
+        return render(self.request, "biblioteca/libro_valorar.html", {"prestamo": prestamo})
+    def post(self,request,pk):
+        libro = get_object_or_404(Libro, pk=pk)
+        prestamo=Prestamo.objects.filter(libro=libro,usuario=request.user)
+        valoracion=Valoracion.objects.create(
+            libro=libro,
+            usuario=request.user,
+            valoracion=request.POST.get("rating"),
+        )
+        libro.rating=Valoracion.objects.filter(libro=libro).aggregate(Avg("valoracion"))
+        libro.save()
+        return redirect("detalles",libro.pk)
+    model = Libro
+    fields = ["rating"]
+    template_name_suffix = "_valorar"
+    success_url = reverse_lazy("listar")
+
+    def form_valid(self, form):
+        libro = Libro.objects.get(pk=self.kwargs["pk"])
+        valoracion = libro.rating
+        valoracion.libro = libro
+        valoracion.usuario = self.request.user
+        valoracion.valoracion = form.cleaned_data["rating"]
+        valoracion.save()
+        media = Libro.objects.aggregate(Avg())
+        libro.rating=(Avg(libro.rating))
+        libro.rating = (libro.rating + valoracion.rating) / len.libro.rating
+        libro.valoracion
+        Valoracion.objects.aggregate(
+            Avg("rating")
+        )
+        libro.save()
+        return redirect("listar", self.request.user)
+class ValoracionMedia(UpdateView):
+    model = Prestamo
+    template_name_suffix = "_update_form"
+    success_url = reverse_lazy("listar")
+
+    def form_valid(self, form):
+        libro = Libro.objects.get(pk=self.kwargs["pk"])
+        valoracion = libro.rating
+        valoracion.libro = libro
+        valoracion.usuario = self.request.user
+        valoracion.valoracion = form.cleaned_data["rating"]
+        valoracion.save()
+        promedio = sum([v.valoracion for v in libro.rating.all()]) / len(
+            libro.rating.all()
+        )
+        media = Libro.objects.aggregate(Avg())
+        libro.rating = (libro.rating + valoracion.rating) / 2
+        libro.valoracion
+        prestamo.libro = libro
+        prestamo.libro.rating, prestamo.valoracion = Valoracion.objects.aggregate(
+            Avg("rating")
+        )
+        libro.save()
+        return redirect("listar", self.request.user)
+"""

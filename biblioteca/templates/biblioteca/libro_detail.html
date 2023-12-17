@@ -7,7 +7,7 @@
     <h2>Autor - {{libro.autor}}</h2>
     <h2>Editorial - {{libro.editorial}}</h2>
     <h2>Fecha - {{libro.fecha_publicacion}}</h2>
-    <h2>Rating - {{libro.rating}}</h2>
+    <h2>Rating - {{libro.rating.rating}}</h2>
     <h2>Genero - {{libro.genero}}</h2>
     <h2>ISBN - {{libro.ISBN}}</h2>
     <h1 class="display-5">Resumen</h1>
@@ -30,6 +30,12 @@
         class="btn btn-success"
       >
         Reservar libro
+      </a>
+      <a
+        href="{% url 'valorar' libro.pk %}"
+        class="btn btn-success"
+      >
+        Valorar libro
       </a>
     </div>
   </div>

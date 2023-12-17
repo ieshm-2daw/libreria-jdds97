@@ -36,7 +36,9 @@ class Libro(models.Model):
         "Editorial", on_delete=models.CASCADE, blank=True, null=True
     )
     fecha_publicacion = models.DateField()
-    rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+    rating = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)], null=True
+    )
     genero = models.ManyToManyField("Genero", max_length=100)
     ISBN = models.CharField(max_length=13)
     resumen = models.TextField()
@@ -107,6 +109,9 @@ class Prestamo(models.Model):
     usuario = models.ForeignKey("Usuario", on_delete=models.CASCADE)
     fecha_prestamo = models.DateField()
     fecha_devolucion = models.DateField(null=True, blank=True)
+    valoracion_usuario = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)], null=True
+    )
     ESTADOS_CHOICES = (
         ("P", "Prestado"),
         ("D", "Devuelto"),
