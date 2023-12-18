@@ -14,7 +14,6 @@ from .views import (
     LibrosDisponibles,
     MisLibros,
     BuscarLibro,
-    Bibliotecario,
 )
 from .views import CrearAutor
 
@@ -27,7 +26,7 @@ urlpatterns = [
     path("libro/detalles/<int:pk>/", DetallesLibro.as_view(), name="detalles"),
     path("autor/new/", CrearAutor.as_view(), name="crear_autor"),
     path(
-        "prestamo/new/<str:usuario>/<int:pk>/",
+        "prestamo/new/<int:pk>/",
         CrearPrestamo.as_view(),
         name="prestamo",
     ),
@@ -45,5 +44,4 @@ urlpatterns = [
     path("buscar/", BuscarLibro.as_view(), name="buscar"),
     # añademe la view de filtrar por categoria
     path("categoria/", FiltrarCategoria.as_view(), name="categoria"),
-    path("bibliotecario/", Bibliotecario.as_view(), name="bibliotecario"),
 ]

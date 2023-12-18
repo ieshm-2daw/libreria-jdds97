@@ -1,6 +1,6 @@
 {% extends 'biblioteca/base.html'%} {% block title %}Reservar libro{% endblock  %} {% block other_content %}Reservar libro para
-{{request.user.username}}{% endblock %} {% block content %}
-<form {%url 'prestamo' libro.pk%} method="post" class="form">
+{{usuario}}{% endblock %} {% block content %}
+<form {%url 'prestamo' libro.pk %} method="post" class="form">
 
   {% csrf_token %}
   <div class="form-group">{{form.as_p}}</div>

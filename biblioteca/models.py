@@ -4,8 +4,10 @@ Módulo que contiene los modelos de la aplicación biblioteca.
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 
+# pylint: disable=no-member
 class Usuario(AbstractUser):
     """
     Modelo que representa a un usuario en el sistema de biblioteca.
@@ -36,10 +38,7 @@ class Libro(models.Model):
         "Editorial", on_delete=models.CASCADE, blank=True, null=True
     )
     fecha_publicacion = models.DateField()
-    rating = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(5)], null=True
-    )
-    genero = models.ManyToManyField("Genero", max_length=100)
+    genero = models.ManyToManyField("Genero", max_length=100, null=True, default=False)
     ISBN = models.CharField(max_length=13)
     resumen = models.TextField()
     DISPONIBILIDAD_CHOICES = (
@@ -54,6 +53,15 @@ class Libro(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
+    def valoracion_media(self) -> float:
+        """
+        Devuelve la valoración media del libro.
+        """
+        return (
+            Valoracion.objects.filter(post=self).aggregate(Avg("rating"))["rating__avg"]
+            or 0
+        )
+
     def __str__(self):
         """
         Devuelve una representación en cadena del título del libro.
@@ -62,6 +70,10 @@ class Libro(models.Model):
 
 
 class Genero(models.Model):
+    """
+    Modelo que representa un género de libros.
+    """
+
     categoria = models.CharField(max_length=150)
 
     def __str__(self):
@@ -121,5 +133,23 @@ class Prestamo(models.Model):
     def __str__(self):
         """
         Devuelve una representación en cadena del libro prestado.
+        """
+        return str(self.libro)
+
+
+class Valoracion(models.Model):
+    """
+    Modelo que representa una valoración de un libro.
+    """
+
+    libro = models.ForeignKey("Libro", on_delete=models.CASCADE)
+    usuario = models.ForeignKey("Usuario", on_delete=models.CASCADE)
+    rating = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, default=0
+    )
+
+    def __str__(self):
+        """
+        Devuelve una representación en cadena del libro valorado.
         """
         return str(self.libro)

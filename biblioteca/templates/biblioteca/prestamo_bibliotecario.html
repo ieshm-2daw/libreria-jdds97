@@ -15,9 +15,13 @@ block content %}
   }
 </style>
 <div class="row mt-5 mb-5">
-  {% if libro_list %} {% for libro in libro_list %}
+  {% if libro_list %} N
   <div class="row shadow-lg p-3">
     <div class="col-md-8">
+      <h1>Nº Libros prestados - {{numeroPrestamos}}</h1>
+      <h1>Nº Libros disponibles - {{numeroDisponibles}}</h1>
+      <h1>Nº Libros no devueltos</h1>
+      {%for libro in libros%}
       <ul class="listado-libros">
         <li class="">
           <strong>Título:</strong>

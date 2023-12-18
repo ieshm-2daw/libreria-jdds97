@@ -19,6 +19,18 @@
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
+    <script>
+      const rate = (rating, post_id) => {
+          fetch(`/rate/${post_id}/${rating}/`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          }).then(rest => {
+              window.location.reload();
+          })
+      }
+  </script>
 
     <script src="main.js"></script>
   </head>

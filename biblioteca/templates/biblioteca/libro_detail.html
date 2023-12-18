@@ -1,6 +1,5 @@
-{% extends 'biblioteca/base.html'%} {%block title%}Detalles del libro{%endblock title%}{%block other_content%}Detalles del libro
-{{libro.title}}{%endblock%} 
-{% block content %}
+{% extends 'biblioteca/base.html'%} {%block title%}Detalles del libro{%endblock title%}{%block other_content%}Detalles del libro {{libro.title}}{%endblock%}
+{%block content %}
 <div class="row mt-5">
   <div class="col-12 shadow-lg p-3">
     <h1 class="display-4">Titulo - {{libro.titulo}}</h1>
@@ -18,27 +17,22 @@
     <br />
     <h3>Disponibilidad - {{libro.disponibilidad}}</h3>
     <br />
-  
   </div>
   <div class="row">
     <div class="col-6 mt-3">
-      <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">Borrar libro</a>
-      <a href="{% url 'listar' %}" class="btn btn-warning">Volver a los libros</a>
-      <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">Editar libro</a>
-      <a
-        href="{% url 'prestamo' libro.pk %}"
-        class="btn btn-success"
-      >
-        Reservar libro
+      <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">
+        Borrar libro
       </a>
-      <a
-        href="{% url 'valorar' libro.pk %}"
-        class="btn btn-success"
-      >
-        Valorar libro
+      <a href="{% url 'listar' %}" class="btn btn-warning">
+        Volver a los libros
+      </a>
+      <a href="{% url 'editar' libro.pk %}" class="btn btn-primary">
+        Editar libro
+      </a>
+      <a href="{% url 'prestamo' libro.pk %}" class="btn btn-success">
+        Reservar libro
       </a>
     </div>
   </div>
-  
 </div>
 {% endblock %}

@@ -19,10 +19,10 @@
     {% endif %}
     <h3>Disponibilidad - {{libro.disponibilidad}}</h3>
     <div>
-      <a href="{% url 'detalles' pk=libro.pk %}" class="btn btn-primary">
+      <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
         Enlace al Libro {{libro.titulo}}
       </a>
-      <a href="{% url 'borrar' pk=libro.pk%}" class="btn btn-danger">
+      <a href="{% url 'borrar' libro.pk%}" class="btn btn-danger">
         Eliminar {{libro.titulo}}
       </a>
     </div>

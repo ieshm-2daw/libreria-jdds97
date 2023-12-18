@@ -5,7 +5,7 @@ from typing import Any
 from datetime import datetime, timedelta
 from urllib import request
 from django.db.models import Case, Value, When, Max, Avg
-from django.http import  HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -18,7 +18,7 @@ from django.views.generic import (
     DetailView,
     View,
 )
-from .models import Libro, Autor, Prestamo, Genero
+from .models import Libro, Autor, Prestamo, Genero, Usuario
 
 
 # pylint: disable=no-member
@@ -32,36 +32,6 @@ class CrearLibro(CreateView):
     success_url = reverse_lazy("listar")
 
 
-# Editar el martes 1
-class Bibliotecario(ListView):
-    """
-    Vista para listar todos los libros.
-    """
-
-    model = Prestamo
-    queryset = Libro.objects.filter(disponibilidad="D")
-    template_name_suffix = "_bibliotecario"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
-        if self.request.user == "bibliotecario":
-            context = super().get_context_data(**kwargs)
-            context["numeroPrestamos"] = Prestamo.objects.count()
-            context["numeroDisponibles"] = Libro.objects.filter(
-                disponibilidad="D"
-            ).count()
-            print(context["numeroDisponibles"])
-            context["librosNoDevueltos"] = Prestamo.objects.filter(
-                fecha_devolucion__lt=datetime.now()
-            )
-            context["librosAdevolver"] = Prestamo.objects.filter(
-                fecha__devolucion__gt=datetime.now() - timedelta(days=7)
-            )
-            context["topLibros"] = Libro.objects.filter(valoracion__gte=4)
-            context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
-            context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
-            return context
-
-
 class ListarLibros(ListView):
     """
     Vista para listar todos los libros.
@@ -71,8 +41,22 @@ class ListarLibros(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
-        context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
+        context["usuario"] = self.request.user.get_username()
+        if context["usuario"] == "bibliotecario":
+            context["numeroPrestamos"] = Prestamo.objects.count()
+            context["numeroDisponibles"] = Libro.objects.filter(
+                disponibilidad="D"
+            ).count()
+            context["librosNoDevueltos"] = Prestamo.objects.filter(
+                fecha_devolucion__lt=datetime.now()
+            )
+            context["librosAdevolver"] = Prestamo.objects.filter(
+                fecha_devolucion__gt=datetime.now() + timedelta(days=7)
+            )
+            context["topLibros"] = Libro.objects.filter(rating__gte=4)
+        else:
+            context["librosDisponibles"] = Libro.objects.filter(disponibilidad="D")
+            context["librosReservados"] = Libro.objects.filter(disponibilidad="R")
         return context
 
 
@@ -153,7 +137,12 @@ class CrearPrestamo(View):
         Get
         """
         libro = get_object_or_404(Libro, pk=pk, disponibilidad="D")
-        return render(self.request, "biblioteca/prestamo_form.html", {"libro": libro})
+        usuario = self.request.user
+        return render(
+            self.request,
+            "biblioteca/prestamo_form.html",
+            {"libro": libro, "usuario": usuario},
+        )
 
     def post(self, pk):
         """
@@ -166,7 +155,7 @@ class CrearPrestamo(View):
         Prestamo.objects.create(
             libro=libro,
             fecha_prestamo=datetime.now(),
-            fecha_devolucion=None,
+            fecha_devolucion=datetime.now() + timedelta(days=10),
             usuario=usuario,
             estado="P",
         )
@@ -209,6 +198,10 @@ class BuscarLibro(ListView):
 
 
 class FiltrarCategoria(ListView):
+    """
+    Vista para filtrar libros por categoría.
+    """
+
     model = Libro
     queryset = Libro.objects.filter(disponibilidad="D")
     template_name_suffix = "_categoria"
@@ -220,70 +213,3 @@ class FiltrarCategoria(ListView):
                 genero__in=Genero.objects.filter(categoria=opciones)
             )
         return super().get(*args, **kwargs)
-
-
-# Editar martes 2 lio de cosas gordas de documentacion django 
-"""
-
-class ValorarLibro(View):
-    def get(self,request,pk):
-        libro = get_object_or_404(Libro, pk=pk)
-        prestamo=Prestamo.objects.filter(libro=libro,usuario=request.user)
-        return render(self.request, "biblioteca/libro_valorar.html", {"prestamo": prestamo})
-    def post(self,request,pk):
-        libro = get_object_or_404(Libro, pk=pk)
-        prestamo=Prestamo.objects.filter(libro=libro,usuario=request.user)
-        valoracion=Valoracion.objects.create(
-            libro=libro,
-            usuario=request.user,
-            valoracion=request.POST.get("rating"),
-        )
-        libro.rating=Valoracion.objects.filter(libro=libro).aggregate(Avg("valoracion"))
-        libro.save()
-        return redirect("detalles",libro.pk)
-    model = Libro
-    fields = ["rating"]
-    template_name_suffix = "_valorar"
-    success_url = reverse_lazy("listar")
-
-    def form_valid(self, form):
-        libro = Libro.objects.get(pk=self.kwargs["pk"])
-        valoracion = libro.rating
-        valoracion.libro = libro
-        valoracion.usuario = self.request.user
-        valoracion.valoracion = form.cleaned_data["rating"]
-        valoracion.save()
-        media = Libro.objects.aggregate(Avg())
-        libro.rating=(Avg(libro.rating))
-        libro.rating = (libro.rating + valoracion.rating) / len.libro.rating
-        libro.valoracion
-        Valoracion.objects.aggregate(
-            Avg("rating")
-        )
-        libro.save()
-        return redirect("listar", self.request.user)
-class ValoracionMedia(UpdateView):
-    model = Prestamo
-    template_name_suffix = "_update_form"
-    success_url = reverse_lazy("listar")
-
-    def form_valid(self, form):
-        libro = Libro.objects.get(pk=self.kwargs["pk"])
-        valoracion = libro.rating
-        valoracion.libro = libro
-        valoracion.usuario = self.request.user
-        valoracion.valoracion = form.cleaned_data["rating"]
-        valoracion.save()
-        promedio = sum([v.valoracion for v in libro.rating.all()]) / len(
-            libro.rating.all()
-        )
-        media = Libro.objects.aggregate(Avg())
-        libro.rating = (libro.rating + valoracion.rating) / 2
-        libro.valoracion
-        prestamo.libro = libro
-        prestamo.libro.rating, prestamo.valoracion = Valoracion.objects.aggregate(
-            Avg("rating")
-        )
-        libro.save()
-        return redirect("listar", self.request.user)
-"""

@@ -1,5 +1,5 @@
 {% extends 'biblioteca/base.html'%}{% block title %}Nuevo libro {% endblock%}
-{%block other_content %} Listado de libros {% endblock %} {% block content %}
+{%block other_content %} Listado de libros {% endblock %} {%block content %}
 <style>
   .listado-libros {
     list-style: none;
@@ -11,6 +11,24 @@
   .listado-libros li strong {
     display: inline-block;
     width: 100px;
+  }
+  .rating-list li {
+    float: right;
+    color: #ddd;
+    padding: 10px 5px;
+  }
+
+  .rating-list li:hover,
+  .rating-list li:hover ~ li {
+    color: orange;
+  }
+
+  .rating-list {
+    display: inline-block;
+    list-style: none;
+  }
+  .checked {
+    color: orange;
   }
 </style>
 <div class="row mt-5 mb-5">
@@ -29,7 +47,88 @@
           {{ libro.editorial }}
           <br />
           <strong>Valoracion:</strong>
-          <!--Filtrar que el numero de estrellas sea el numero de valoracion-->
+          <span
+            class="fa fa-star {% if libro.average_rating > 0 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 1 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 2 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 3 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 4 %} checked {% endif %}"
+          ></span>
+          <br />
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      {%if libro.portada%}
+      <img
+        src="{{ libro.portada.url}}"
+        alt="{{
+          libro.titulo
+            }}"
+        class="img-fluid d-flex justify-content-end"
+      />
+      {%endif%}
+    </div>
+  </div>
+
+  <div class="my-3">
+    <a href="{% url 'detalles' libro.pk %}" class="btn btn-primary">
+      Ver detalle
+    </a>
+    <a href="{% url 'editar' libro.pk %}" class="btn btn-warning">
+      Editar libro
+    </a>
+    <a href="{% url 'borrar' libro.pk %}" class="btn btn-danger">
+      Eliminar libro
+    </a>
+  </div>
+
+  {% endfor %} {% endif %}
+</div>
+
+{% if usuario == "bibliotecario" %}
+<div class="row mt-5 mb-5">
+  <div class="row shadow-lg p-3">
+    <div class="col-md-8">
+      <h1>Nº Libros prestados - {{numeroPrestamos}}</h1>
+      <h1>Nº Libros disponibles - {{numeroDisponibles}}</h1>
+      <h1>Nº Libros no devueltos</h1>
+      {% if librosNoDevueltos %} {%for libro in librosNoDevueltos%}
+      <ul class="listado-libros">
+        <li class="">
+          <strong>Título:</strong>
+          {{ libro.titulo }}
+          <br />
+          <strong>Autor:</strong>
+          {{ libro.autor }}
+          <br />
+          <strong>Editorial:</strong>
+          {{ libro.editorial }}
+          <br />
+          <strong>Valoracion:</strong>
+          <span
+            class="fa fa-star {% if libro.average_rating > 0 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 1 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 2 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 3 %} checked {% endif %}"
+          ></span>
+          <span
+            class="fa fa-star {% if libro.average_rating > 4 %} checked {% endif %}"
+          ></span>
           <br />
         </li>
       </ul>
@@ -61,4 +160,4 @@
 
   {% endfor %} {% endif %}
 </div>
-{% endblock %}
+{% endif %} {% endblock %}
