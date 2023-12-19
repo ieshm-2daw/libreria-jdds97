@@ -91,7 +91,15 @@
     </a>
   </div>
 
-  {% endfor %} {% endif %}
+  {% endfor %} {% endif %} {%if page_obj.has_previous %}
+  <a href="{%url 'listar'%}?page={{page_obj.previous_page_number}}">
+    Ir a página {{page_obj.previous_page_number}}
+  </a>
+  {% endif %} La página actual es {{page_obj.number}} {% if page_obj.has_next %}
+  <a href="{%url 'listar'%}?page={{page_obj.next_page_number}}">
+    Ir a página {{page_obj.next_page_number}}
+  </a>
+  {% endif %}
 </div>
 
 {% if usuario == "bibliotecario" %}

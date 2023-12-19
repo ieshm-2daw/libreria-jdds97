@@ -7,7 +7,7 @@ búsqueda{%endblock%}{%block content %} {%for libro in libros%}
   <h2>Editorial - {{libro.editorial}}</h2>
   <h2>Fecha - {{libro.fecha_publicacion}}</h2>
   <h2>Rating - {{libro.rating}}</h2>
-  <h2>Genero - {{libro.genero}}</h2>
+  <h2>Genero - {{libro.genero.categoria}}</h2>
   <h2>ISBN - {{libro.ISBN}}</h2>
   <h1 class="display-5">Resumen</h1>
   <p>{{libro.resumen}}</p>

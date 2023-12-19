@@ -3,7 +3,6 @@ Este módulo contiene las vistas de la aplicación biblioteca.
 """
 from typing import Any
 from datetime import datetime, timedelta
-from urllib import request
 from django.db.models import Case, Value, When, Max, Avg
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -18,7 +17,7 @@ from django.views.generic import (
     DetailView,
     View,
 )
-from .models import Libro, Autor, Prestamo, Genero, Usuario
+from .models import Libro, Autor, Prestamo, Genero
 
 
 # pylint: disable=no-member
@@ -38,6 +37,7 @@ class ListarLibros(ListView):
     """
 
     model = Libro
+    paginate_by = 5
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -132,16 +132,15 @@ class CrearPrestamo(View):
     Vista para crear un nuevo préstamo de libro.
     """
 
-    def get(self, pk):
+    def get(self, request, pk):
         """
         Get
         """
         libro = get_object_or_404(Libro, pk=pk, disponibilidad="D")
-        usuario = self.request.user
         return render(
-            self.request,
+            request,
             "biblioteca/prestamo_form.html",
-            {"libro": libro, "usuario": usuario},
+            {"libro": libro},
         )
 
     def post(self, pk):
@@ -159,7 +158,7 @@ class CrearPrestamo(View):
             usuario=usuario,
             estado="P",
         )
-        return redirect("detalles", pk=libro.pk)
+        return redirect("detalles", libro.pk)
 
 
 class DevolverLibro(UpdateView):
@@ -188,7 +187,7 @@ class BuscarLibro(ListView):
     """
 
     model = Libro
-    template_name = "biblioteca/libro_buscar.html"
+    template_name_suffix = "_buscar"
 
     def get(self, *args, **kwargs):
         titulo = self.request.GET.get("titulo")
