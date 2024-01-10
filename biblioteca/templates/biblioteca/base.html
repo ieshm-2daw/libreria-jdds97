@@ -36,8 +36,14 @@
   </head>
   <body>
     <div class="container">
+
       <div class="row">
         <div class="col-md-6">
+          
+          {%if request.user.is_authenticated%}
+          <h2 class="display-5">Bienvenido {{request.user.first_name|default:request.user.username}}</h2>
+          <button class="btn btn-primary"> <a class="text-white" href="{%url 'logout'%}">Cerrar sesión</a></button>
+          {%endif%}
           <h1 class="display-2">{% block other_content %}{% endblock %}</h1>
         </div>
         <div class="col-md-6">

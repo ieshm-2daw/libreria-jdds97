@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+from django.urls import reverse_lazy
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +29,7 @@ AUTH_USER_MODEL = "biblioteca.Usuario"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.100.5"]
+ALLOWED_HOSTS = ["192.168.100.5", "127.0.0.1"]
 
 
 # Application definition
@@ -58,7 +59,7 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -76,18 +77,15 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-"""
+#
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "OPTIONS": {
-            "read_default_file": "/path/to/my.cnf",
-        },
+        "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-"""
 
+""" 
 DATABASES = {
     "default": {
         "NAME": "libreria_jesus_daw",
@@ -100,9 +98,7 @@ DATABASES = {
             "autocommit": True,
         },
     }
-}
-
-
+} """
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -152,3 +148,4 @@ MEDIA_URL = "/media/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_REDIRECT_URL = reverse_lazy("listar")

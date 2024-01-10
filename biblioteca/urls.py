@@ -42,6 +42,6 @@ urlpatterns = [
     ),
     path("mis_libros/<str:usuario>/", MisLibros.as_view(), name="mis_libros"),
     path("buscar/", BuscarLibro.as_view(), name="buscar"),
-    # añademe la view de filtrar por categoria
     path("categoria/", FiltrarCategoria.as_view(), name="categoria"),
+    
 ]

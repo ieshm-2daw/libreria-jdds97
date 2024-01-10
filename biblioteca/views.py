@@ -4,6 +4,7 @@ Este módulo contiene las vistas de la aplicación biblioteca.
 from typing import Any
 from datetime import datetime, timedelta
 from django.db.models import Case, Value, When, Max, Avg
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -17,11 +18,12 @@ from django.views.generic import (
     DetailView,
     View,
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Libro, Autor, Prestamo, Genero
 
 
 # pylint: disable=no-member
-class CrearLibro(CreateView):
+class CrearLibro(LoginRequiredMixin, CreateView):
     """
     Vista para crear un nuevo libro.
     """
@@ -31,7 +33,7 @@ class CrearLibro(CreateView):
     success_url = reverse_lazy("listar")
 
 
-class ListarLibros(ListView):
+class ListarLibros(LoginRequiredMixin, ListView):
     """
     Vista para listar todos los libros.
     """
@@ -60,7 +62,7 @@ class ListarLibros(ListView):
         return context
 
 
-class EditarLibro(UpdateView):
+class EditarLibro(LoginRequiredMixin, UpdateView):
     """
     Vista para editar un libro existente.
     """
@@ -71,7 +73,7 @@ class EditarLibro(UpdateView):
     success_url = reverse_lazy("listar")
 
 
-class EliminarLibro(DeleteView):
+class EliminarLibro(LoginRequiredMixin, DeleteView):
     """
     Vista para eliminar un libro existente.
     """
@@ -88,7 +90,7 @@ class DetallesLibro(DetailView):
     model = Libro
 
 
-class CrearAutor(CreateView):
+class CrearAutor(LoginRequiredMixin, CreateView):
     """
     Vista para crear un nuevo autor.
     """
@@ -108,7 +110,7 @@ class LibrosDisponibles(ListView):
     template_name_suffix = "_disponibles"
 
 
-class MisLibros(ListView):
+class MisLibros(LoginRequiredMixin, ListView):
     """
     Vista para listar los libros prestados y devueltos por el usuario actual.
     """
@@ -127,7 +129,8 @@ class MisLibros(ListView):
         return context
 
 
-class CrearPrestamo(View):
+# @login_required -->Para la forma de funciones
+class CrearPrestamo(LoginRequiredMixin, View):
     """
     Vista para crear un nuevo préstamo de libro.
     """

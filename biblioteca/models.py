@@ -38,7 +38,7 @@ class Libro(models.Model):
         "Editorial", on_delete=models.CASCADE, blank=True, null=True
     )
     fecha_publicacion = models.DateField()
-    genero = models.ManyToManyField("Genero", max_length=100, null=True, default=False)
+    genero = models.ManyToManyField("Genero", max_length=100, default=False)
     ISBN = models.CharField(max_length=13)
     resumen = models.TextField()
     DISPONIBILIDAD_CHOICES = (
